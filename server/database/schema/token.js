@@ -32,6 +32,9 @@ TokenSchema.statics = {
     const token = await this.findOne({
       name: 'access_token'
     }).exec()
+    if (token && token.token) {
+      token.accessToken = token.token
+    }
     return token
   },
 
@@ -40,7 +43,7 @@ TokenSchema.statics = {
       name: 'access_token'
     }).exec()
 
-    if(token) {
+    if (token) {
       token.token = data.access_token
       token.expires_in = data.expires_in
     } else {
