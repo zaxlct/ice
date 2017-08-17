@@ -19,6 +19,7 @@
     "mongoose": "^4.11.7",
     "nuxt": "^1.0.0-rc3",
     "randa": "^0.0.3",
+    "request-promise": "^4.2.1",
     "sha1": "^1.1.1",
     "source-map-support": "^0.4.15"
   },
