@@ -1,5 +1,5 @@
 import xml2js from 'xml2js'
-import template from './template'
+import ejs from 'ejs'
 
 export const xmlTojs = xml => new Promise((resolve, reject) => {
   xml2js.parseString(xml, {trim: true}, (err, content) => {
@@ -44,7 +44,7 @@ export const formatMessage = result => {
  * @Content 自定义的回复内容，可是是字符串，也可能是包含好几个字段的对象
  * @Message 接收微信推送的事件提醒 or 接收微信推送的普通消息，原本是 xml 格式，在这里是 JSON 格式
  */
-export const tpl = (content = 'Empty News', message) => {
+export const dataToXmlTpl = (message, content = 'Empty News') => {
   let msgType = 'text'
   if (Array.isArray(content)) {
     msgType = 'news'
@@ -52,14 +52,59 @@ export const tpl = (content = 'Empty News', message) => {
   if (content.type) {
     msgType = content.type
   }
-
-  const info = Object.assign({}, {
+  const info = {
     content,
     msgType,
     createTime: new Date().getTime(),
     toUserName: message.FromUserName,
     fromUserName: message.ToUserName,
-  })
+  }
 
-  return template(info)
+  const XmlTemplate = `
+  <xml>
+    <ToUserName><![CDATA[<%= toUserName %>]]></ToUserName>
+    <FromUserName><![CDATA[<%= fromUserName %>]]></FromUserName>
+    <CreateTime><%= createTime %></CreateTime>
+    <MsgType><![CDATA[<%= msgType %>]]></MsgType>
+    <% if (msgType ==='text') { %>
+      <Content><![CDATA[<%- content %>]]></Content>
+    <% } else if (msgType === 'image') { %>
+      <Image>
+      <MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
+      </Image>
+    <% } else if (msgType === 'voice') { %>
+      <Voice>
+        <MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
+      </Voice>
+    <% } else if (msgType === 'video') { %>
+      <Video>
+        <MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
+        <Title><![CDATA[<%= content.title %>]]></Title>
+        <Description><![CDATA[<%= content.description %>]]></Description>
+      </Video>
+    <% } else if (msgType === 'music') { %>
+      <Music>
+        <Title><![CDATA[<%= content.title %>]]></Title>
+        <Description><![CDATA[<%= content.description %>]]></Description>
+        <MusicUrl><![CDATA[<%= content.musicUrl %>]]></MusicUrl>
+        <HQMusicUrl><![CDATA[<%= content.hqMusicUrl %>]]></HQMusicUrl>
+        <ThumbMediaId><![CDATA[<%= content.thumbMediaId %>]]></ThumbMediaId>
+      </Music>
+    <% } else if (msgType === 'news') { %>
+      <ArticleCount><%= content.length %></ArticleCount>
+      <Articles>
+        <% content.forEach(function(item) { %>
+          <item>
+            <Title><![CDATA[<%= item.title %>]]></Title>
+            <Description><![CDATA[<%= item.description %>]]></Description>
+            <PicUrl><![CDATA[<%= item.picUrl %>]]></PicUrl>
+            <Url><![CDATA[<%= item.url %>]]></Url>
+          </item>
+        <% }) %>
+      </Articles>
+    <% } %>
+  </xml>
+`
+
+  return ejs.compile(XmlTemplate)(info)
 }
