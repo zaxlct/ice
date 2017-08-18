@@ -31,19 +31,16 @@ export default (opts, reply) => async (ctx, next) => {
 
     // 微信推送的原始数据包
     const content = await util.xmlTojs(data)
-    // ctx.weixin = util.formatMessage(content.xml)
-    ctx.weixin = {}
+    ctx.weixin = util.formatMessage(content.xml)
 
     await reply.apply(ctx, [ctx, next])
-    // const xml = util.tpl(ctx.body, ctx.weixin)
-    const xml = `
-    <xml>
-      <ToUserName><![CDATA[${content.xml.FromUserName[0]}]]></ToUserName>
-      <FromUserName><![CDATA[${content.xml.ToUserName[0]}]]></FromUserName>
-      <CreateTime>12345678</CreateTime>
-      <MsgType><![CDATA[text]]></MsgType>
-      <Content><![CDATA[${ctx.body}]]></Content>
-    </xml>`
+
+    /*
+     * @ctx.weixin 接收到的微信推送的事件提醒 or 接收到的微信推送的普通消息，原本是 xml 格式，在这里是格式后的 JSON 格式
+     * @ctx.body 准备回复给微信用户的消息体
+     * ctx.weixin + ctx.body 组成回复给用户的 XML 结构体
+     */
+    const xml = util.tpl(ctx.body, ctx.weixin)
 
     ctx.status = 200
     ctx.type = 'application/xml'
