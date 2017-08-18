@@ -35,8 +35,11 @@ export default opts => async (ctx, next) => {
     const receiveFromWeixinMessage = util.formatMessage(receiveFromWeixinJSON.xml)
 
     const replyToWexinTplData = await replyToWexinTemplate(receiveFromWeixinMessage)
-    const replyToWexinXML = util.dataToXmlTpl(receiveFromWeixinMessage, replyToWexinTplData)
-    console.log('replyToWexinXML=>', replyToWexinXML)
+    const {
+      FromUserName,
+      ToUserName
+    } = receiveFromWeixinMessage
+    const replyToWexinXML = util.dataToXmlTpl(ToUserName, FromUserName, replyToWexinTplData)
 
     ctx.status = 200
     ctx.type = 'application/xml'

@@ -44,7 +44,9 @@ export const formatMessage = result => {
  * @Content 自定义的回复内容，可是是字符串，也可能是包含好几个字段的对象
  * @Message 接收微信推送的事件提醒 or 接收微信推送的普通消息，原本是 xml 格式，在这里是 JSON 格式
  */
-export const dataToXmlTpl = (message, content = 'Empty News') => {
+export const dataToXmlTpl = (ToUserName, FromUserName, content = 'Empty News') => {
+  /*****/
+  // 这段 msgType 判断代码是因为 content 里偷懒没有为 'text' 和 'new' 类型设置 type
   let msgType = 'text'
   if (Array.isArray(content)) {
     msgType = 'news'
@@ -52,12 +54,14 @@ export const dataToXmlTpl = (message, content = 'Empty News') => {
   if (content.type) {
     msgType = content.type
   }
+  /*****/
+
   const info = {
     content,
     msgType,
     createTime: new Date().getTime(),
-    toUserName: message.FromUserName,
-    fromUserName: message.ToUserName,
+    toUserName: FromUserName,
+    fromUserName: ToUserName,
   }
 
   const XmlTemplate = `
