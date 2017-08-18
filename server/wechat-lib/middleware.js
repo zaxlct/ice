@@ -15,12 +15,12 @@ export default (opts, reply) => async (ctx, next) => {
   const sha = sha1(str)
   console.log(sha === signature)
 
-  if(sha !== signature) {
+  if (sha !== signature) {
     ctx.body = 'Failed'
     return false
   }
 
-  if(ctx.method === 'GET') {
+  if (ctx.method === 'GET') {
     ctx.body = echostr
   } else if (ctx.method === 'POST') {
     const data = await getRawBody(ctx.req, {
