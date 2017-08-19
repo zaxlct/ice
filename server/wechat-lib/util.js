@@ -1,14 +1,15 @@
 import xml2js from 'xml2js'
 import ejs from 'ejs'
+import sha1 from 'sha1'
 
-export const xmlTojs = xml => new Promise((resolve, reject) => {
+const xmlToJs = xml => new Promise((resolve, reject) => {
   xml2js.parseString(xml, {trim: true}, (err, content) => {
     if (err) reject(err)
     else resolve(content)
   })
 })
 
-export const formatMessage = result => {
+const formatMessage = result => {
   let message = {}
   if (typeof result === 'object') {
     const keys = Object.keys(result)
@@ -44,7 +45,7 @@ export const formatMessage = result => {
  * @Content 自定义的回复内容，可是是字符串，也可能是包含好几个字段的对象
  * @Message 接收微信推送的事件提醒 or 接收微信推送的普通消息，原本是 xml 格式，在这里是 JSON 格式
  */
-export const dataToXmlTpl = (ToUserName, FromUserName, content = 'Empty News') => {
+const dataToXmlTpl = (ToUserName, FromUserName, content = 'Empty News') => {
   /*****/
   // 这段 msgType 判断代码是因为 content 里偷懒没有为 'text' 和 'new' 类型设置 type
   let msgType = 'text'
@@ -109,6 +110,66 @@ export const dataToXmlTpl = (ToUserName, FromUserName, content = 'Empty News') =
     <% } %>
   </xml>
 `
-
   return ejs.compile(XmlTemplate)(info)
+}
+
+
+/*
+ * Ticket 签名算法
+ */
+function createNonce () {
+  return Math.random().toString(36).substr(2, 15)
+}
+
+function createTimestamp () {
+  return parseInt(new Date().getTime() / 1000, 0) + ''
+}
+
+function raw (args) {
+  let keys = Object.keys(args)
+  let newArgs = {}
+  let str = ''
+
+  keys = keys.sort()
+  keys.forEach((key) => {
+    newArgs[key.toLowerCase()] = args[key]
+  })
+
+  for (let k in newArgs) {
+    str += '&' + k + '=' + newArgs[k]
+  }
+
+  return str.substr(1)
+}
+
+function signIt (nonce, ticket, timestamp, url) {
+  const ret = {
+    jsapi_ticket: ticket,
+    nonceStr: nonce,
+    timestamp: timestamp,
+    url,
+  }
+
+  const string = raw(ret)
+
+  return sha1(string)
+}
+
+const getWechatSign = (ticket, url) => {
+  const noncestr = createNonce()
+  const timestamp = createTimestamp()
+  const signature = signIt(noncestr, ticket, timestamp, url)
+
+  return {
+    noncestr,
+    timestamp,
+    signature,
+  }
+}
+
+export {
+  xmlToJs,
+  formatMessage,
+  dataToXmlTpl,
+  getWechatSign,
 }
