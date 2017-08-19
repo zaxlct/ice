@@ -4,6 +4,8 @@ import fs from 'fs'
 import {resolve} from 'path'
 
 const models = resolve(__dirname, '../database/schema')
+
+// 声明 database/schema/*.js ，无需挨个 import
 fs.readdirSync(models)
   .filter(file =>  ~file.search(/^[^\.].*js$/))
   .forEach(file => require(resolve(models, file)))
