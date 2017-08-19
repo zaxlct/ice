@@ -31,7 +31,7 @@ export default opts => async (ctx, next) => {
     })
 
     // 微信推送的原始数据包
-    const receiveFromWeixinJSON = await util.xmlTojs(receiveFromWeixinXML)
+    const receiveFromWeixinJSON = await util.xmlToJs(receiveFromWeixinXML)
     const receiveFromWeixinMessage = util.formatMessage(receiveFromWeixinJSON.xml)
 
     const replyToWexinTplData = await replyToWexinTemplate(receiveFromWeixinMessage)
