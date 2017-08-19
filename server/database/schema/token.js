@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
-const TokenSchema = new mongoose.Schema({
+const TokenSchema = new Schema({
   name: String,
   token: String,
   expire_in: Number,
@@ -18,7 +18,7 @@ const TokenSchema = new mongoose.Schema({
 })
 
 TokenSchema.pre('save', function (next) {
-  if(this.isNew) {
+  if (this.isNew) {
     this.meta.createdAt = this.meta.updateAt = Date.now()
   } else {
     this.meta.updateAt = Date.now()
