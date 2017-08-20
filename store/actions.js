@@ -9,15 +9,23 @@ export default {
     return Services.getUserByOAuth(url)
   },
 
-  async fetchHouse ({state}) {
+  async fetchHouses ({state}) {
     const res = await Services.fetchHouses()
     state.houses = res.data.data
 
     return res
   },
 
+  async showHouse ({state}, _id) {
+    if (_id === state.currentHouse._id) return
+    const res = await Services.fetchHouse(_id)
+    state.currentHouse = res.data.data
+
+    return res
+  },
+
   async fetchCities ({state}) {
-    const res = await Services.fetchHouses()
+    const res = await Services.fetchCities()
     state.cities = res.data.data
 
     return res
@@ -30,10 +38,10 @@ export default {
     return res
   },
 
-  async fetchHouses ({state}, _id) {
-    if (_id === state.currentHouse._id) return
-    const res = await Services.fetchHouse(_id)
-    state.currentHouse = res.data.data
+  async showCharacter ({state}, _id) {
+    if (_id === state.currentCharacter._id) return
+    const res = await Services.fetchCharacter(_id)
+    state.currentCharacter = res.data.data
 
     return res
   },

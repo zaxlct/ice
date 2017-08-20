@@ -13,7 +13,11 @@ class Services {
   }
 
   fetchHouses () {
-    return axios.get(`${apiUrl}/wiki/house`)
+    return axios.get(`${apiUrl}/wiki/houses`)
+  }
+
+  fetchHouse (id) {
+    return axios.get(`${apiUrl}/wiki/houses/${id}`)
   }
 
   fetchCities () {
@@ -24,8 +28,8 @@ class Services {
     return axios.get(`${apiUrl}/wiki/characters`)
   }
 
-  fetchHouse (id) {
-    return axios.get(`${apiUrl}/wiki/houses/${id}`)
+  fetchCharacter (id) {
+    return axios.get(`${apiUrl}/wiki/characters/${id}`)
   }
 }
 
