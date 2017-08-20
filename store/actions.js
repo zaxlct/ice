@@ -45,4 +45,19 @@ export default {
 
     return res
   },
+
+  async fetchProducts ({state}) {
+    const res = await Services.fetchProducts()
+    state.products = res.data.data
+
+    return res
+  },
+
+  async showProduct ({state}, _id) {
+    if (_id === state.currentPruduct._id) return
+    const res = await Services.fetchProduct(_id)
+    state.currentProduct = res.data.data
+
+    return res
+  },
 }

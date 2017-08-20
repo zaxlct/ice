@@ -25,4 +25,4 @@ export default {
 }
 </script>
 
-<style lang="sass", src='~static/sass/modal.sass'></style>
+<style lang="sass", src='static/sass/modal.sass'></style>
