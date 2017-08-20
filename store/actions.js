@@ -60,4 +60,11 @@ export default {
 
     return res
   },
+
+  async fetchUserAndOrders ({state}, _id) {
+    const res = await Services.fetchUserAndOrders()
+    state.user = res.data.data
+
+    return res
+  },
 }

@@ -12,6 +12,7 @@ const createStore = () => new Vuex.Store({
     cities: [],
     products: [],
     characters: [],
+    user: null,
   },
   getters,
   actions,

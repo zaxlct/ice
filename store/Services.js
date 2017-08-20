@@ -39,6 +39,10 @@ class Services {
   fetchProduct (id) {
     return axios.get(`${apiUrl}/wiki/products/${id}`)
   }
+
+  fetchUserAndOrders () {
+    return axios.get(`${apiUrl}/wiki/user`)
+  }
 }
 
 export default new Services()
