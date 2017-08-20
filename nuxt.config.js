@@ -6,7 +6,7 @@ module.exports = {
     title: 'starter',
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      // { name: 'viewport', content: 'width=device-width, initial-scale=1' },//flexible
       { hid: 'description', name: 'description', content: 'Nuxt.js project' }
     ],
     link: [
@@ -24,6 +24,13 @@ module.exports = {
       src: 'static/sass/base.sass',
       lang: 'sass?indentedSyntax=true'
     },
+    {
+      src: 'swiper/dist/css/swiper.css'
+    }
+  ],
+  plugins: [
+    { src: '~plugins/swiper.js', ssr: false },
+    { src: '~plugins/flexible.js', ssr: false },//适配移动端
   ],
   /*
   ** Customize the progress-bar color
